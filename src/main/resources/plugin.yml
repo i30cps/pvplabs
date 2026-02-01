@@ -1,0 +1,14 @@
+main: dev.rotator.PvPLabs
+name: PvPLabs
+api-version: 1.21
+version: 0.1
+commands:
+  party:
+    aliases: [p]
+    description: "Command for parties"
+    usage: "§c/p accept/leave/list/invite"
+  duel:
+    description: "(beta) Duel a player"
+    usage: "§c/duel <player>"
+  rotatordebug:
+    description: "secret admin debug command hehehe"
