@@ -4,6 +4,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
@@ -26,7 +27,7 @@ public class HopliteGoldenHeadItem extends CustomItem {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
         assert meta != null;
-        meta.setDisplayName(ChatColor.GOLD + "Golden Head");
+        meta.setDisplayName(ChatColor.GOLD + "Hoplite Golden Head");
         meta.setLore(List.of(ChatColor.YELLOW + "Right click to consume"));
         meta.getPersistentDataContainer().set(KEY, PersistentDataType.STRING, id);
 
@@ -50,7 +51,7 @@ public class HopliteGoldenHeadItem extends CustomItem {
     public void onUseImpl(Player player, ItemStack item) {
         player.sendMessage("§aYou ate a §6Golden Head§a!");
         // Apply effects...
-        player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 10*20, 2));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 5*20, 2));
         player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 15*20, 0));
         player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 120*20, 1));
 
@@ -60,7 +61,9 @@ public class HopliteGoldenHeadItem extends CustomItem {
         if (item.getAmount() > 1) {
             item.setAmount(item.getAmount() - 1);
         } else {
-            player.getInventory().removeItem(item);
+            PlayerInventory inv = player.getInventory();
+            if (inv.getItemInOffHand().equals(item)) inv.setItemInOffHand(null);
+            else inv.removeItem(item);
         }
 
         player.getWorld().playSound(
