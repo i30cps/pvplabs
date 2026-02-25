@@ -1,7 +1,7 @@
-main: dev.rotator.PvPLabs
+main: dev.rotator.pvplabs.PvPLabs
 name: PvPLabs
 api-version: 1.21
-version: 0.1
+version: 0.1.1
 commands:
   party:
     aliases: [p]

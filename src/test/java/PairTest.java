@@ -1,4 +1,4 @@
-import dev.rotator.util.Pair;
+import dev.rotator.pvplabs.util.Pair;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
