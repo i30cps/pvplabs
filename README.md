@@ -2,7 +2,7 @@
 
 **PvPLabs** is an open-source Minecraft plugin built for the PvPLabs server. Join the [Discord](https://discord.gg/txGzD5RKGF) to join the community!  
 
-It is designed to provide a more accurate, transparent, and competitive alternative to the widely used but flawed ranked system of MCTiers.  
+PvPLabs is designed to provide a more accurate, transparent, and competitive alternative to the widely used but flawed ranked system of MCTiers.  
 In addition to a fully reworked ranked system, PvPLabs aims to evolve into a full-featured PvP **minigame server framework**.  
 
 ---
