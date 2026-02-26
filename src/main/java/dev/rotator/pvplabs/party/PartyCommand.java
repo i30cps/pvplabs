@@ -1,6 +1,6 @@
 package dev.rotator.pvplabs.party;
 
-import dev.rotator.pvplabs.game.GamePlayer;
+import dev.rotator.pvplabs.game.PvPLabsPlayer;
 import dev.rotator.pvplabs.PvPLabs;
 import net.md_5.bungee.api.chat.*;
 import net.md_5.bungee.api.*;
@@ -46,7 +46,7 @@ public class PartyCommand implements CommandExecutor {
 
                 assert party != null;
 
-                for (GamePlayer gp : party.getMembersListClone()) {
+                for (PvPLabsPlayer gp : party.getMembersListClone()) {
                     sendMsg(p, "  -> " + gp.getName() + ChatColor.WHITE + gp.getStateString());
                 }
                 break;
@@ -89,14 +89,14 @@ public class PartyCommand implements CommandExecutor {
                     return true;
                 }
                 
-                String errMsg = partyManager.acceptInvite(GamePlayer.getPlayer(p2), GamePlayer.getPlayer(p));
+                String errMsg = partyManager.acceptInvite(PvPLabsPlayer.getPlayer(p2), PvPLabsPlayer.getPlayer(p));
 
                 if (errMsg.isEmpty()) {
                     Party party2 = partyManager.getParty(p2);
 
                     assert party2 != null; // Since there was not an error message, this will always be not null.
 
-                    for (GamePlayer gp : party2.getMembersListClone()) {
+                    for (PvPLabsPlayer gp : party2.getMembersListClone()) {
                         Player memberPlayer = Bukkit.getPlayer(gp.getUUID());
                         if (memberPlayer != null)
                             sendMsg(memberPlayer, ChatColor.WHITE + p.getName() + ChatColor.BLUE + " joined the party.");
@@ -106,7 +106,7 @@ public class PartyCommand implements CommandExecutor {
                 }
                 break;
             case "leave":
-                sendMsg(p, partyManager.leaveParty(GamePlayer.getPlayer(p)));
+                sendMsg(p, partyManager.leaveParty(PvPLabsPlayer.getPlayer(p)));
                 break;
             default:
                 return false;

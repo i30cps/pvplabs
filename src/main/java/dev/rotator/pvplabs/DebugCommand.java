@@ -1,7 +1,7 @@
 package dev.rotator.pvplabs;
 
+import com.sk89q.worldedit.math.BlockVector3;
 import dev.rotator.pvplabs.kit.InventoryIO;
-import dev.rotator.pvplabs.ranked.MatchSidebar;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class DebugCommand implements CommandExecutor {
     @Override
@@ -51,8 +53,14 @@ public class DebugCommand implements CommandExecutor {
             }
         } else if (strings[0].equals("ghead")) {
             p.getInventory().addItem(PvPLabs.getMain().getCustomItemsManager().createItem("golden_head"));
-        } else if (strings[0].equals("sidebar")) {
-            new MatchSidebar(p).update("redName", 1, "blueName", 2, "mode");
+        } else if  (strings[0].equals("test_blockvector3")) {
+            Set<BlockVector3> test = new HashSet<>();
+            BlockVector3 a = BlockVector3.at(29, 19, 31);
+            BlockVector3 b = BlockVector3.at(29, 19, 31);
+            test.add(a);
+            p.sendMessage("" + test.contains(b)); // must print true
+            p.sendMessage("" + a.equals(b)); // must print true
+            p.sendMessage("" + (a.hashCode() == b.hashCode())); // must print true
         }
 
         return true;

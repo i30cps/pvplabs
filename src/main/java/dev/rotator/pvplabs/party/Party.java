@@ -1,22 +1,22 @@
 package dev.rotator.pvplabs.party;
 
-import dev.rotator.pvplabs.game.GamePlayer;
+import dev.rotator.pvplabs.game.PvPLabsPlayer;
 
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 public class Party {
-    private final ArrayList<GamePlayer> members;
-    private GamePlayer owner;
+    private final ArrayList<PvPLabsPlayer> members;
+    private PvPLabsPlayer owner;
 
-    protected Party(GamePlayer owner) {
+    protected Party(PvPLabsPlayer owner) {
         members = new ArrayList<>();
 
         this.owner = owner;
         members.add(owner);
     }
 
-    public boolean isOwner(GamePlayer gp) {
+    public boolean isOwner(PvPLabsPlayer gp) {
         return owner.equals(gp);
     }
 
@@ -26,10 +26,10 @@ public class Party {
      * @return true if all members are online and in a lobby, false otherwise.
      */
     public boolean isReady() {
-        return members.stream().allMatch(GamePlayer::isReady);
+        return members.stream().allMatch(PvPLabsPlayer::isReady);
     }
 
-    public GamePlayer getOwner() {
+    public PvPLabsPlayer getOwner() {
         return owner;
     }
 
@@ -38,17 +38,17 @@ public class Party {
      *
      * @param gp the GamePlayer.
      */
-    public void setOwner(GamePlayer gp) {
+    public void setOwner(PvPLabsPlayer gp) {
         if (!members.contains(gp))
             throw new NoSuchElementException("Owner is not in party");
         owner = gp;
     }
 
-    public ArrayList<GamePlayer> getMembersListClone() {
+    public ArrayList<PvPLabsPlayer> getMembersListClone() {
         return new ArrayList<>(members);
     }
 
-    public void addMember(GamePlayer gp) {
+    public void addMember(PvPLabsPlayer gp) {
         members.add(gp);
     }
 
@@ -57,7 +57,7 @@ public class Party {
      * @param gp The GamePlayer member to be removed
      * @return true if the list of members contained the member to be removed.
      */
-    public boolean removeMember(GamePlayer gp) {
+    public boolean removeMember(PvPLabsPlayer gp) {
         return members.remove(gp);
     }
 

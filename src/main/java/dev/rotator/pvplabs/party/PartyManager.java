@@ -1,6 +1,6 @@
 package dev.rotator.pvplabs.party;
 
-import dev.rotator.pvplabs.game.GamePlayer;
+import dev.rotator.pvplabs.game.PvPLabsPlayer;
 import dev.rotator.pvplabs.PvPLabs;
 import dev.rotator.pvplabs.util.Pair;
 import net.md_5.bungee.api.ChatColor;
@@ -19,8 +19,8 @@ import java.util.*;
  */
 public class PartyManager {
     private final ArrayList<Party> parties;
-    private final Map<GamePlayer, Party> playerPartyCache;
-    private final Map<Pair<GamePlayer, GamePlayer>, PartyInvite> activeInvites = new HashMap<>();
+    private final Map<PvPLabsPlayer, Party> playerPartyCache;
+    private final Map<Pair<PvPLabsPlayer, PvPLabsPlayer>, PartyInvite> activeInvites = new HashMap<>();
     private final Map<UUID, BukkitTask> leaveTimers = new HashMap<>();
 
     public PartyManager() {
@@ -29,31 +29,31 @@ public class PartyManager {
     }
 
     @Nullable
-    public Party getParty(GamePlayer gp) {
+    public Party getParty(PvPLabsPlayer gp) {
         return playerPartyCache.get(gp);
     }
 
     @Nullable
     public Party getParty(Player p) {
-        return getParty(GamePlayer.getPlayer(p));
+        return getParty(PvPLabsPlayer.getPlayer(p));
     }
 
-    public boolean hasParty(GamePlayer gp) {
+    public boolean hasParty(PvPLabsPlayer gp) {
         return playerPartyCache.containsKey(gp);
     }
 
     public boolean hasParty(Player p) {
-        return hasParty(GamePlayer.getPlayer(p));
+        return hasParty(PvPLabsPlayer.getPlayer(p));
     }
 
     protected void broadcastToParty(Party party, String msg) {
-        for (GamePlayer gp : party.getMembersListClone()) {
+        for (PvPLabsPlayer gp : party.getMembersListClone()) {
             Player p = Bukkit.getPlayer(gp.getUUID());
             if (p != null) p.sendMessage(msg);
         }
     }
 
-    private Party createParty(GamePlayer owner) {
+    private Party createParty(PvPLabsPlayer owner) {
         Party party = new Party(owner);
         parties.add(party);
         playerPartyCache.put(owner, party);
@@ -70,8 +70,8 @@ public class PartyManager {
     public String sendInvite(@NotNull Player senderPlayer, @NotNull Player receiverPlayer) {
         PvPLabs.getMain().getLogger().info("Sending party invite from " + senderPlayer.getName() + " to " + receiverPlayer.getName());
 
-        GamePlayer sender = GamePlayer.getPlayer(senderPlayer);
-        GamePlayer receiver = GamePlayer.getPlayer(receiverPlayer);
+        PvPLabsPlayer sender = PvPLabsPlayer.getPlayer(senderPlayer);
+        PvPLabsPlayer receiver = PvPLabsPlayer.getPlayer(receiverPlayer);
 
         if (getInvite(sender, receiver) != null) return "You already have an invite to that player.";
 
@@ -92,7 +92,7 @@ public class PartyManager {
      * @param receiver The receiver of the party invitation.
      * @return An empty string if successful; otherwise, the error message as to why the party invite could not be accepted.
      */
-    public String acceptInvite(GamePlayer sender, GamePlayer receiver) {
+    public String acceptInvite(PvPLabsPlayer sender, PvPLabsPlayer receiver) {
         PvPLabs.getMain().getLogger().info("Accepting party invite from " + sender.getName() + " to " + receiver.getName());
         PartyInvite invite = getInvite(sender, receiver);
 
@@ -112,7 +112,7 @@ public class PartyManager {
         return "";
     }
 
-    PartyInvite getInvite(GamePlayer sender, GamePlayer receiver) {
+    PartyInvite getInvite(PvPLabsPlayer sender, PvPLabsPlayer receiver) {
         PartyInvite inv = activeInvites.get(new Pair<>(sender, receiver));
         if (inv == null) {
             PvPLabs.getMain().getLogger().info("getInvite null");
@@ -121,7 +121,7 @@ public class PartyManager {
         return activeInvites.get(new Pair<>(sender, receiver));
     }
 
-    void addInvite(GamePlayer sender, GamePlayer receiver) {
+    void addInvite(PvPLabsPlayer sender, PvPLabsPlayer receiver) {
         PvPLabs.getMain().getLogger().info("Adding party invite from " + sender.getName() + " to " + receiver.getName());
         activeInvites.put(new Pair<>(sender, receiver), new PartyInvite(this, sender, receiver));
     }
@@ -137,7 +137,7 @@ public class PartyManager {
 
     protected void onLeaveGame(Player p) {
         Party party = getParty(p);
-        GamePlayer gp = GamePlayer.getPlayer(p);
+        PvPLabsPlayer gp = PvPLabsPlayer.getPlayer(p);
 
         if (party == null) return;
 
@@ -162,7 +162,7 @@ public class PartyManager {
      * @param gp The GamePlayer gp.
      * @return The message to be sent to the player who left the party (may not be applicable to certain uses)
      */
-    public String leaveParty(GamePlayer gp) {
+    public String leaveParty(PvPLabsPlayer gp) {
         Player p = Bukkit.getPlayer(gp.getUUID());
         Party party = getParty(gp);
 
@@ -176,7 +176,7 @@ public class PartyManager {
                 disbandParty(party);
                 return "Disbanded party.";
             } else {
-                GamePlayer newOwner = party.getMembersListClone().getFirst();
+                PvPLabsPlayer newOwner = party.getMembersListClone().getFirst();
                 party.setOwner(newOwner);
                 // TODO: Move messaging out of PartyManager.
                 broadcastToParty(party, ChatColor.BLUE + "[Party] " + ChatColor.WHITE
@@ -197,15 +197,15 @@ public class PartyManager {
      */
     public void disbandParty(Party party) {
         // TODO: Move message sending to be handled elsewhere (otu of PartyManager).
-        for (GamePlayer gp : party.getMembersListClone()) {
+        for (PvPLabsPlayer gp : party.getMembersListClone()) {
             Player p = Bukkit.getPlayer(gp.getUUID());
             if (p != null) p.sendMessage(ChatColor.BLUE + "[Party] The party has been disbanded.");
         }
         parties.remove(party);
-        for (GamePlayer key : new ArrayList<>(playerPartyCache.keySet())) {
+        for (PvPLabsPlayer key : new ArrayList<>(playerPartyCache.keySet())) {
             if (playerPartyCache.get(key).equals(party)) leaveParty(key);
         }
-        for (Pair<GamePlayer, GamePlayer> pair : new ArrayList<>(activeInvites.keySet())) {
+        for (Pair<PvPLabsPlayer, PvPLabsPlayer> pair : new ArrayList<>(activeInvites.keySet())) {
             if (activeInvites.get(pair).getParty().equals(party)) activeInvites.remove(pair);
         }
     }

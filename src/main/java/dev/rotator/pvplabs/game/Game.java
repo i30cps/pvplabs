@@ -37,6 +37,8 @@ public abstract class Game {
     protected void endGame() {
         handleEnd();
 
+        behaviors.clear();
+
         for (Player p : players) {
             PlayerUtils.resetPlayer(p);
             p.teleport(PvPLabs.getMain().getSpawnLocation());

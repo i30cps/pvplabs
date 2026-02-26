@@ -1,7 +1,7 @@
 package dev.rotator.pvplabs.game.ctf;
 
 import dev.rotator.pvplabs.game.Game;
-import dev.rotator.pvplabs.game.GamePlayer;
+import dev.rotator.pvplabs.game.PvPLabsPlayer;
 import dev.rotator.pvplabs.util.PlayerUtils;
 import fr.mrmicky.fastinv.ItemBuilder;
 import org.bukkit.Color;
@@ -124,7 +124,6 @@ public class StandardCTFGame extends Game {
 
         for (Player p : players) {
             spawnPlayer(p);
-            GamePlayer.getPlayer(p).setFallDamage(false);
         }
 
         // TODO: Finish this! (add the part about the flag)

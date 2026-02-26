@@ -14,8 +14,10 @@ public class Kit {
     private final ItemStack[] inventory, armor;
     private final ItemStack offhand;
     private final List<Map<String, Object>> effects;
+    private final String name;
 
-    public Kit(ItemStack[] inventory, ItemStack[] armor, ItemStack offhand, List<Map<String, Object>> effects) {
+    public Kit(String name, ItemStack[] inventory, ItemStack[] armor, ItemStack offhand, List<Map<String, Object>> effects) {
+        this.name = name;
         this.inventory = inventory;
         this.armor = armor;
         this.offhand = offhand;
@@ -50,4 +52,7 @@ public class Kit {
                 .toArray(ItemStack[]::new);
     }
 
+    public String getName() {
+        return name;
+    }
 }

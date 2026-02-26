@@ -1,7 +1,7 @@
 package dev.rotator.pvplabs.util.invites;
 
 import dev.rotator.pvplabs.PvPLabs;
-import dev.rotator.pvplabs.game.GamePlayer;
+import dev.rotator.pvplabs.game.PvPLabsPlayer;
 import dev.rotator.pvplabs.util.Pair;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -13,14 +13,14 @@ import java.util.Map;
  * An invitation from a sender to a receiver for performing an action.
  */
 public class ActionInvite {
-    private static final Map<Pair<GamePlayer, GamePlayer>, Map<ActionInviteType, ActionInvite>> activeInvites = new HashMap<>();
+    private static final Map<Pair<PvPLabsPlayer, PvPLabsPlayer>, Map<ActionInviteType, ActionInvite>> activeInvites = new HashMap<>();
 
-    private final GamePlayer sender, receiver;
+    private final PvPLabsPlayer sender, receiver;
     private final ActionInviteHandler handler, onCancel;
     private final ActionInviteType type;
     private final BukkitTask cancelTask;
 
-    private ActionInvite(ActionInviteType type, GamePlayer sender, GamePlayer receiver, ActionInviteHandler handler, ActionInviteHandler onCancel, long expiryTicks) {
+    private ActionInvite(ActionInviteType type, PvPLabsPlayer sender, PvPLabsPlayer receiver, ActionInviteHandler handler, ActionInviteHandler onCancel, long expiryTicks) {
         this.type = type;
         this.sender = sender;
         this.receiver = receiver;
@@ -46,7 +46,7 @@ public class ActionInvite {
      * @param expiryTicks the time it takes for the invite to expire.
      * @return the success of the creation of the invite (false means already exists)
      */
-    public static boolean createInvite(ActionInviteType type, GamePlayer sender, GamePlayer receiver, ActionInviteHandler handler, ActionInviteHandler onCancel, long expiryTicks) {
+    public static boolean createInvite(ActionInviteType type, PvPLabsPlayer sender, PvPLabsPlayer receiver, ActionInviteHandler handler, ActionInviteHandler onCancel, long expiryTicks) {
         if (getInvite(type, sender, receiver) != null) return false; // already exists
 
         new ActionInvite(type, sender, receiver, handler, onCancel, expiryTicks);
@@ -54,7 +54,7 @@ public class ActionInvite {
         return true;
     }
 
-    public static boolean hasInvite(ActionInviteType type, GamePlayer sender, GamePlayer receiver) {
+    public static boolean hasInvite(ActionInviteType type, PvPLabsPlayer sender, PvPLabsPlayer receiver) {
         return getInvite(type, sender, receiver) != null;
     }
 
@@ -65,7 +65,7 @@ public class ActionInvite {
      * @param receiver The receiver.
      * @return True if successful, false if unsuccessful (due to such an invitation not existing).
      */
-    public static boolean acceptInvite(ActionInviteType type, GamePlayer sender, GamePlayer receiver) {
+    public static boolean acceptInvite(ActionInviteType type, PvPLabsPlayer sender, PvPLabsPlayer receiver) {
         ActionInvite inv = getInvite(type, sender, receiver);
 
         if (inv == null) return false;
@@ -76,14 +76,14 @@ public class ActionInvite {
         return true;
     }
 
-    private static ActionInvite getInvite(ActionInviteType type, GamePlayer sender, GamePlayer receiver) {
+    private static ActionInvite getInvite(ActionInviteType type, PvPLabsPlayer sender, PvPLabsPlayer receiver) {
         Map<ActionInviteType, ActionInvite> m = getActionInviteMap(sender, receiver);
         if (m == null) return null;
         return m.get(type);
     }
 
 
-    private static Map<ActionInviteType, ActionInvite> getActionInviteMap(GamePlayer sender, GamePlayer receiver) {
+    private static Map<ActionInviteType, ActionInvite> getActionInviteMap(PvPLabsPlayer sender, PvPLabsPlayer receiver) {
         return activeInvites.computeIfAbsent(new Pair<>(sender, receiver), k -> new HashMap<>());
     }
 
@@ -111,7 +111,7 @@ public class ActionInvite {
 
     public static String allInviteStringsDebug() {
         String result = "";
-        for (Pair<GamePlayer, GamePlayer> p : activeInvites.keySet()) {
+        for (Pair<PvPLabsPlayer, PvPLabsPlayer> p : activeInvites.keySet()) {
             result += p.getFirst().getName() + ", " + p.getSecond().getName() + "\n";
             for (ActionInviteType type : activeInvites.get(p).keySet()) {
                 result += " - " + activeInvites.get(p).get(type) + "\n";

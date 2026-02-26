@@ -1,15 +1,15 @@
 package dev.rotator.pvplabs.party;
 
-import dev.rotator.pvplabs.game.GamePlayer;
+import dev.rotator.pvplabs.game.PvPLabsPlayer;
 import dev.rotator.pvplabs.PvPLabs;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class PartyInvite {
-    private final GamePlayer sender, receiver;
+    private final PvPLabsPlayer sender, receiver;
     private final PartyManager manager;
     private final Party party;
 
-    public PartyInvite(PartyManager manager, GamePlayer sender, GamePlayer receiver) {
+    public PartyInvite(PartyManager manager, PvPLabsPlayer sender, PvPLabsPlayer receiver) {
         this.manager = manager;
         this.sender = sender;
         this.receiver = receiver;
@@ -27,11 +27,11 @@ public class PartyInvite {
         manager.cancelInvite(this);
     }
 
-    public GamePlayer getSender() {
+    public PvPLabsPlayer getSender() {
         return sender;
     }
 
-    public GamePlayer getReceiver() {
+    public PvPLabsPlayer getReceiver() {
         return receiver;
     }
 

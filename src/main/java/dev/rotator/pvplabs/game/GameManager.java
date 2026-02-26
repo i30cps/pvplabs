@@ -7,6 +7,7 @@ import dev.rotator.pvplabs.game.kitduels.KitDuelGame;
 import dev.rotator.pvplabs.game.kitduels.KitDuelMap;
 import dev.rotator.pvplabs.kit.Kit;
 import dev.rotator.pvplabs.ranked.MatchDuelGame;
+import dev.rotator.pvplabs.ranked.RankedPlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -17,17 +18,22 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class GameManager {
-    private final Map<GamePlayer, Game> gpToGame;
+    private final Map<PvPLabsPlayer, Game> gpToGame;
     private final Set<Game> ongoingGames;
 
     @Deprecated(forRemoval = true)
     private final KitDuelMap moleMap;
+    @Deprecated(forRemoval = true)
+    private final KitDuelMap flatMap;
 
     public GameManager() {
          gpToGame = new HashMap<>();
          ongoingGames = new HashSet<>();
          moleMap = new KitDuelMap(
                  "Mole", "maps/MoleMap.schem", new org.bukkit.util.Vector(16, 10, 5), new Vector(16, 10, 27)
+         );
+         flatMap = new KitDuelMap(
+                 "Flat", "maps/Flat.schem", new org.bukkit.util.Vector(16, 10, 5), new Vector(16, 10, 27)
          );
     }
 
@@ -37,19 +43,19 @@ public class GameManager {
     }
 
     protected void markInGame(Player p, @NotNull Game game) {
-        markInGame(GamePlayer.getPlayer(p), game);
+        markInGame(PvPLabsPlayer.getPlayer(p), game);
     }
 
-    protected void markInGame(GamePlayer gp, @NotNull Game game) {
+    protected void markInGame(PvPLabsPlayer gp, @NotNull Game game) {
         gpToGame.put(gp, game);
         gp.markInLobby(false);
     }
 
     protected void markNotInGame(Player p) {
-        markNotInGame(GamePlayer.getPlayer(p));
+        markNotInGame(PvPLabsPlayer.getPlayer(p));
     }
 
-    protected void markNotInGame(GamePlayer gp) {
+    protected void markNotInGame(PvPLabsPlayer gp) {
         gpToGame.remove(gp);
         gp.markInLobby(true);
     }
@@ -60,14 +66,14 @@ public class GameManager {
     }
 
     public Game getGame(Player p) {
-        return getGame(GamePlayer.getPlayer(p));
+        return getGame(PvPLabsPlayer.getPlayer(p));
     }
 
-    public Game getGame(GamePlayer gp) {
+    public Game getGame(PvPLabsPlayer gp) {
         return gpToGame.get(gp);
     }
 
-    protected void markOnline(GamePlayer gp, boolean online) {
+    protected void markOnline(PvPLabsPlayer gp, boolean online) {
         gp.markOnline(online);
     }
 
@@ -185,17 +191,30 @@ public class GameManager {
     public void startMoleGame(Player p1, Player p2) {
         Kit moleKit = PvPLabs.getMain().getKitManager().getKit("mole");
 
-        MatchDuelGame game = new MatchDuelGame(getNextCorner(moleMap.getXSize(), moleMap.getZSize()), p1, p2, moleKit, moleMap, ((winner, loser) -> {
-            winner.sendMessage("test winner");
-            loser.sendMessage("test loser");
+        MatchDuelGame game = new MatchDuelGame(getNextCorner(moleMap.getXSize(), moleMap.getZSize()), p1, p2,
+                new RankedPlayerData(p1.getUniqueId()), new RankedPlayerData(p2.getUniqueId()), moleKit, moleMap,
+                ((winner, loser) -> {
+            Bukkit.getLogger().info("Game finished (winner: " + winner.getName() + ", loser: " + loser.getName() + ")");
         }));
 
-        game.getSettings().canBreakMap(true).canCraft(true);
         startGame(game);
     }
 
     public void removeGame(Game game) {
         ongoingGames.remove(game);
 
+    }
+
+    public void startSwordGame(Player p, Player p2) {
+        Kit swordKit = PvPLabs.getMain().getKitManager().getKit("sword");
+
+        MatchDuelGame game = new MatchDuelGame(getNextCorner(flatMap.getXSize(), flatMap.getZSize()), p, p2,
+                new RankedPlayerData(p.getUniqueId()), new RankedPlayerData(p2.getUniqueId()), swordKit, flatMap,
+                ((winner, loser) -> {
+                    Bukkit.getLogger().info("Sword game finished (winner: " + winner.getName() + ", loser: " + loser.getName() + ")");
+                }));
+
+        game.allowMapBreaking(false);
+        startGame(game);
     }
 }

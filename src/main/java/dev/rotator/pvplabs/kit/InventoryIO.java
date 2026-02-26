@@ -93,7 +93,7 @@ public final class InventoryIO {
         ItemStack offhand = config.getObject("offhand", ItemStack.class);
         List<Map<String, Object>> effects = (List<Map<String, Object>>) config.getList("effects");
 
-        return new Kit(inventory, armor, offhand, effects);
+        return new Kit(file.getName().replaceAll("\\.yml", ""), inventory, armor, offhand, effects);
     }
 
     public boolean hasKit(String name, UUID playerUUID) {

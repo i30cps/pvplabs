@@ -1,8 +1,6 @@
 package dev.rotator.pvplabs.game;
 
 import dev.rotator.pvplabs.PvPLabs;
-import dev.rotator.pvplabs.party.Party;
-import dev.rotator.pvplabs.party.PartyManager;
 import dev.rotator.pvplabs.util.invites.ActionInvite;
 import dev.rotator.pvplabs.util.invites.ActionInviteType;
 import net.kyori.adventure.text.Component;
@@ -16,9 +14,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DuelCommand implements CommandExecutor {
 
@@ -34,8 +29,8 @@ public class DuelCommand implements CommandExecutor {
             return true;
         }
 
-        GamePlayer gp = GamePlayer.getPlayer(p);
-        GamePlayer gp2 = GamePlayer.getPlayer(p2);
+        PvPLabsPlayer gp = PvPLabsPlayer.getPlayer(p);
+        PvPLabsPlayer gp2 = PvPLabsPlayer.getPlayer(p2);
 
         if (strings.length == 2 && strings[1].equalsIgnoreCase("accept")) {
             if (!ActionInvite.acceptInvite(ActionInviteType.DUEL, gp2, gp)) {
@@ -48,6 +43,12 @@ public class DuelCommand implements CommandExecutor {
             p.sendMessage(ChatColor.YELLOW + "Invite to " + p2.getName() + " has been accepted.");
             p2.sendMessage(ChatColor.YELLOW + "Invite from " + p.getName() + " has been accepted.");
 
+            if (strings.length == 2) {
+                if (strings[1].equalsIgnoreCase("sword")) {
+                    PvPLabs.getMain().getGameManager().startSwordGame(p, p2);
+                    return;
+                }
+            }
             PvPLabs.getMain().getGameManager().startMoleGame(p, p2);
         }, (() -> {
             String message = ChatColor.RED + "Duel invitation from " + gp.getName() + " to " + gp2.getName() + " has expired.";

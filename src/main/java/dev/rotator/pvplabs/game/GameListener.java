@@ -11,15 +11,17 @@ public class GameListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
         Player p = e.getPlayer();
-        GamePlayer gp = GamePlayer.getPlayer(p);
+        PvPLabsPlayer gp = PvPLabsPlayer.getPlayer(p);
 
         PvPLabs.getMain().getGameManager().markOnline(gp, false);
+        gp.deleteBoard();
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        GamePlayer gp = GamePlayer.getPlayer(p);
+        PvPLabsPlayer gp = PvPLabsPlayer.getPlayer(p);
+        gp.defaultSidebarContents();
 
         PvPLabs.getMain().getGameManager().markOnline(gp, true);
 

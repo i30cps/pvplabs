@@ -1,16 +1,19 @@
 package dev.rotator.pvplabs.game;
 
+import com.google.common.collect.Lists;
+import fr.mrmicky.fastboard.FastBoard;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
-public class GamePlayer {
-    private static final Map<UUID, GamePlayer> CACHE = new HashMap<>();
+public class PvPLabsPlayer {
+    private static final Map<UUID, PvPLabsPlayer> CACHE = new HashMap<>();
     private final UUID uuid;
     private String name;
-    private boolean online, isInLobby, fallDamage;
+    private boolean online, isInLobby;
+    private FastBoard board;
 
     /**
      * Gets the GamePlayer object specific for the UUID, so that no duplicate objects will be created.
@@ -18,18 +21,38 @@ public class GamePlayer {
      * @param p The player.
      * @return The GamePlayer object for that specific UUID.
      */
-    public static GamePlayer getPlayer(Player p) {
+    public static PvPLabsPlayer getPlayer(Player p) {
         if (CACHE.containsKey(p.getUniqueId())) return CACHE.get(p.getUniqueId());
-        return new GamePlayer(p.getUniqueId(), p.getName());
+        return new PvPLabsPlayer(p.getUniqueId(), p.getName());
     }
 
-    private GamePlayer(UUID uuid, String name) {
+    private PvPLabsPlayer(UUID uuid, String name) {
         this.uuid = uuid;
         this.name = name;
         this.online = true;
         this.isInLobby = true;
-        this.fallDamage = true;
         CACHE.put(uuid, this);
+    }
+
+    public void defaultSidebarContents() {
+        setBoardContents("§lClosed Beta", "Join the discord to learn more", "or to help support the project!");
+    }
+
+    public void setBoardContents(Collection<String> lines) {
+        Player player = Bukkit.getPlayer(uuid);
+        if (player == null) return;
+        if (board == null) board = new FastBoard(player);
+
+        ArrayList<String> newLines = Lists.newArrayList(lines);
+        newLines.add("");
+        newLines.add(ChatColor.YELLOW + "discord.gg/txGzD5RKGF");
+        newLines.addFirst("");
+        newLines.addFirst(ChatColor.GOLD + "" + ChatColor.BOLD + "PvPLabs");
+        board.updateLines(newLines);
+    }
+
+    public void setBoardContents(String... lines) {
+        setBoardContents(Arrays.asList(lines));
     }
 
     public void setName(String name) {
@@ -43,16 +66,6 @@ public class GamePlayer {
     public boolean isOnline() {
         return online;
     }
-
-    public void setFallDamage(boolean value) {
-        fallDamage = value;
-    }
-
-    @Deprecated
-    public boolean getFallDamage() {
-        return fallDamage;
-    }
-
 
     /**
      * Check if the GamePlayer is in a lobby state.
@@ -93,10 +106,12 @@ public class GamePlayer {
 
     @Override
     public String toString() {
-        String result = name;
+        String result = "GamePlayer{" + name;
 
         if (!isOnline()) result += " (Offline)";
         if (!inLobby()) result += " (In Game)";
+
+        result += '}';
 
         return result;
     }
@@ -113,5 +128,11 @@ public class GamePlayer {
 
     protected void markOnline(boolean online) {
         this.online = online;
+    }
+
+    public void deleteBoard() {
+        if (board == null) return;
+        board.delete();
+        board = null;
     }
 }
