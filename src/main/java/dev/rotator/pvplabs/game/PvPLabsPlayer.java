@@ -47,8 +47,8 @@ public class PvPLabsPlayer {
         newLines.add("");
         newLines.add(ChatColor.YELLOW + "discord.gg/txGzD5RKGF");
         newLines.addFirst("");
-        newLines.addFirst(ChatColor.GOLD + "" + ChatColor.BOLD + "PvPLabs");
         board.updateLines(newLines);
+        board.updateTitle(ChatColor.GOLD + "" + ChatColor.BOLD + "PvPLabs");
     }
 
     public void setBoardContents(String... lines) {

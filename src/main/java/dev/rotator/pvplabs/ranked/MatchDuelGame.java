@@ -5,15 +5,11 @@ import dev.rotator.pvplabs.game.Game;
 import dev.rotator.pvplabs.game.PvPLabsPlayer;
 import dev.rotator.pvplabs.game.behaviors.*;
 import dev.rotator.pvplabs.game.kitduels.KitDuelMap;
-import dev.rotator.pvplabs.game.kitduels.KitDuelSettings;
 import dev.rotator.pvplabs.kit.Kit;
 import dev.rotator.pvplabs.util.PlayerUtils;
-import fr.mrmicky.fastboard.FastBoard;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -29,7 +25,8 @@ public class MatchDuelGame extends Game {
     private final MatchResultHandler resultHandler;
     private BukkitTask sidebarUpdater;
     private final MapBreakingBehavior breakingBehavior;
-    private int secondsElapsed, minutesElapsed, hoursElapsed;
+    private int secondsElapsed;
+    private final MatchSidebar sidebar;
 
     public MatchDuelGame(Location lowerCorner, Player p1, Player p2,
                          RankedPlayerData p1Data, RankedPlayerData p2data, Kit kit,
@@ -44,6 +41,7 @@ public class MatchDuelGame extends Game {
         this.kit = kit;
         this.map = map;
         this.resultHandler = matchResultHandler;
+        this.sidebar = new MatchSidebar(this);
 
         addBehavior(new DieOrQuitBehavior(this::playerDies));
         addBehavior(new OutOfBoundsBehavior(map, lowerCorner, 10, this::playerDies));
@@ -55,21 +53,6 @@ public class MatchDuelGame extends Game {
         }));
         breakingBehavior = new MapBreakingBehavior(map, lowerCorner);
         addBehavior(breakingBehavior);
-    }
-
-    private void updateSidebar(PvPLabsPlayer gp,
-                        String blueName, int bluePing,
-                        String redName, int redPing,
-                        String mode, String timeElapsed) {
-        gp.setBoardContents(
-                ChatColor.GRAY + "Mode: " + ChatColor.WHITE + mode,
-                ChatColor.GRAY + "Time elapsed: " + timeElapsed,
-                "",
-                ChatColor.BLUE + blueName
-                        + ChatColor.WHITE + " [" + p1Data.getDisplayedRating() + "] (" + redPing + "ms)",
-                ChatColor.RED + redName
-                        + ChatColor.WHITE + " [" + p2Data.getDisplayedRating() + "] (" + bluePing + "ms)"
-        );
     }
 
     @Override
@@ -93,22 +76,8 @@ public class MatchDuelGame extends Game {
         sidebarUpdater = new BukkitRunnable() {
             @Override
             public void run() {
-                String formattedTime = String.format("%02d:%02d:%02d", hoursElapsed, minutesElapsed, secondsElapsed);
-
-                updateSidebar(gp1, p1.getName(), p1.getPing(), p2.getName(), p2.getPing(),
-                        kit.getName(), formattedTime);
-                updateSidebar(gp2, p2.getName(), p2.getPing(), p1.getName(), p1.getPing(),
-                        kit.getName(), formattedTime);
-
                 secondsElapsed++;
-                if (secondsElapsed == 60) {
-                    secondsElapsed = 0;
-                    minutesElapsed++;
-                    if (minutesElapsed == 60) {
-                        minutesElapsed = 0;
-                        hoursElapsed++;
-                    }
-                }
+                sidebar.update(secondsElapsed);
             }
         }.runTaskTimer(PvPLabs.getMain(), 0L, 20L);
     }
@@ -142,5 +111,30 @@ public class MatchDuelGame extends Game {
 
     public void allowMapBreaking(boolean b) {
         breakingBehavior.setAllowBreaking(b);
+    }
+
+    // getters for p1, p2, gp1, gp2, p1Rating (p1Data#getDisplayedRating), p2Rating (p2Data#getDisplayedRating)
+    public Player getP1() {
+        return p1;
+    }
+    public Player getP2() {
+        return p2;
+    }
+
+    public PvPLabsPlayer getGp1() {
+        return gp1;
+    }
+    public PvPLabsPlayer getGp2() {
+        return gp2;
+    }
+    public int getP1DisplayedRating() {
+        return p1Data.getDisplayedRating();
+    }
+    public int getP2DisplayedRating() {
+        return p2Data.getDisplayedRating();
+    }
+
+    public String getModeName() {
+        return kit.getName();
     }
 }

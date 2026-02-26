@@ -35,7 +35,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <finalName>RotatorServer-0.0.1</finalName>
+                            <finalName>PvPLabs-0.1.2</finalName>
                         </configuration>
                     </execution>
                 </executions>
