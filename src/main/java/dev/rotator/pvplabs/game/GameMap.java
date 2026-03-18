@@ -23,7 +23,7 @@ import java.util.Set;
 public class GameMap {
     protected final String name;              // Map name
     protected final String schematicFile;     // Path to the .schem file
-    protected final int xSize, zSize;         // Dimensions
+    protected final int xSize, ySize, zSize;         // Dimensions
     // Sparse set of original block positions (relative to lower corner)
     private final Set<BlockVector3> originalBlocks = new HashSet<>();
 
@@ -52,6 +52,7 @@ public class GameMap {
         });
 
         this.xSize = region.getWidth();
+        this.ySize = region.getHeight();
         this.zSize = region.getLength();
     }
 
@@ -68,6 +69,7 @@ public class GameMap {
     // Getters
     public String getName() { return name; }
     public int getXSize() { return xSize; }
+    public int getYSize() { return ySize; }
     public int getZSize() { return zSize; }
 
     public void pasteSchematic(Location location) {

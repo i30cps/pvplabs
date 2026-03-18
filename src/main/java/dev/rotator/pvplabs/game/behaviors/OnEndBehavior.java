@@ -11,7 +11,7 @@ public class OnEndBehavior implements GameBehavior {
     }
 
     @Override
-    public void onEnd(Game game) {
+    public void onEnd() {
         onEndTask.run();
     }
 }

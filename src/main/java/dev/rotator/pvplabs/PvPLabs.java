@@ -41,7 +41,8 @@ public class PvPLabs extends JavaPlugin {
         GameRule<Boolean>[] turnOn = new GameRule[] {
                 GameRule.DO_IMMEDIATE_RESPAWN,
                 GameRule.KEEP_INVENTORY,
-                GameRule.DO_TILE_DROPS
+                GameRule.DO_TILE_DROPS,
+                GameRule.NATURAL_REGENERATION,
         }, turnOff = new GameRule[] {
                 GameRule.ANNOUNCE_ADVANCEMENTS,
                 GameRule.BLOCK_EXPLOSION_DROP_DECAY,

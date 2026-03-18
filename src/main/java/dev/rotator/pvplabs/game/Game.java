@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -73,7 +74,7 @@ public abstract class Game {
 
     public boolean handleDeath(Player p) {
         for (GameBehavior b : behaviors) {
-            if (!b.onDeath(this, p)) {
+            if (!b.onDeath(p)) {
                 return false;
             }
         }
@@ -109,18 +110,25 @@ public abstract class Game {
 
     public boolean handleMove(Player p, Location to) {
         for (GameBehavior b : behaviors) {
-            if (!b.onMove(this, p, to)) {
+            if (!b.onMove(p, to)) {
                 return false;
             }
         }
         return true;
     }
 
+    public boolean handleRegenerate(Player p, EntityRegainHealthEvent e) {
+        for (GameBehavior b : behaviors) {
+            if (!b.onRegenerate(p, e)) return false;
+        }
+        return true;
+    }
+
     public void handleQuit(Player p) {
-        behaviors.forEach(b -> b.onQuit(this, p));
+        behaviors.forEach(b -> b.onQuit(p));
     }
 
     public void handleEnd() {
-        behaviors.forEach(b -> b.onEnd(this));
+        behaviors.forEach(GameBehavior::onEnd);
     }
 }

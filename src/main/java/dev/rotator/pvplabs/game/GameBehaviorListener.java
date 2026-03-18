@@ -9,6 +9,7 @@ import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -91,5 +92,14 @@ public class GameBehaviorListener implements Listener {
         if (game == null) return;
 
         if (!game.handleMove(p, e.getTo())) e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onRegenerate(EntityRegainHealthEvent e) {
+        if (!(e.getEntity() instanceof Player p)) return;
+        Game game = gameManager.getGame(p);
+        if (game == null) return;
+
+        if (!game.handleRegenerate(p, e)) e.setCancelled(true);
     }
 }

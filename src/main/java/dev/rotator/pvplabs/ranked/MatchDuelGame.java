@@ -25,6 +25,8 @@ public class MatchDuelGame extends Game {
     private final MatchResultHandler resultHandler;
     private BukkitTask sidebarUpdater;
     private final MapBreakingBehavior breakingBehavior;
+    private final NaturalRegenToggleBehavior naturalRegenToggleBehavior;
+    private final CraftingToggleBehavior craftingToggleBehavior;
     private int secondsElapsed;
     private final MatchSidebar sidebar;
 
@@ -51,8 +53,13 @@ public class MatchDuelGame extends Game {
             gp1.defaultSidebarContents();
             gp2.defaultSidebarContents();
         }));
+        addBehavior(new MapCleanupBehavior(map, lowerCorner));
         breakingBehavior = new MapBreakingBehavior(map, lowerCorner);
         addBehavior(breakingBehavior);
+        naturalRegenToggleBehavior = new NaturalRegenToggleBehavior(true);
+        addBehavior(naturalRegenToggleBehavior);
+        craftingToggleBehavior = new CraftingToggleBehavior(true);
+        addBehavior(craftingToggleBehavior);
     }
 
     @Override
@@ -111,6 +118,12 @@ public class MatchDuelGame extends Game {
 
     public void allowMapBreaking(boolean b) {
         breakingBehavior.setAllowBreaking(b);
+    }
+    public void allowNaturalRegen(boolean b) {
+        naturalRegenToggleBehavior.setAllowNaturalRegeneration(b);
+    }
+    public void allowCrafting(boolean b) {
+        craftingToggleBehavior.setAllowCrafting(b);
     }
 
     // getters for p1, p2, gp1, gp2, p1Rating (p1Data#getDisplayedRating), p2Rating (p2Data#getDisplayedRating)

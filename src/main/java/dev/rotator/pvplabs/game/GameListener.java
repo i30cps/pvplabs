@@ -26,7 +26,5 @@ public class GameListener implements Listener {
         PvPLabs.getMain().getGameManager().markOnline(gp, true);
 
         if (gp.inLobby()) return;
-
-        // TODO: Figure out how to handle joining in the middle of a game.
     }
 }

@@ -23,15 +23,9 @@ public class MapBreakingBehavior implements GameBehavior {
         this.allowBreaking = allowBreaking;
     }
 
-    private boolean shouldBeAbleToBreak(Block block) {
-        if (allowBreaking) return true;
-        return !map.isInOriginalBlock(lowerCorner, BlockVector3.at(block.getX(), block.getY(), block.getZ()));
-    }
-
     @Override
     public boolean onBreak(Player p, Block block) {
-        boolean result = shouldBeAbleToBreak(block);
-        Bukkit.getLogger().info("Block break at " + block.getX() + " " + block.getY() + " " + block.getZ() + ": " + result);
-        return result;
+        if (allowBreaking) return true;
+        return !map.isInOriginalBlock(lowerCorner, BlockVector3.at(block.getX(), block.getY(), block.getZ()));
     }
 }

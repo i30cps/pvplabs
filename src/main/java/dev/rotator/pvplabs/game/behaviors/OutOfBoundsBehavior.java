@@ -35,7 +35,7 @@ public class OutOfBoundsBehavior implements GameBehavior {
     }
 
     @Override
-    public boolean onMove(Game game, Player p, Location to) {
+    public boolean onMove(Player p, Location to) {
 
         if (map.isInside(lowerCorner, to)) {
             BukkitTask task = tasks.remove(p.getUniqueId());

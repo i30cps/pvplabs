@@ -13,13 +13,13 @@ public class DieOrQuitBehavior implements GameBehavior {
     }
 
     @Override
-    public boolean onDeath(Game game, Player player) {
+    public boolean onDeath(Player player) {
         consumer.accept(player);
         return false;
     }
 
     @Override
-    public void onQuit(Game game, Player player) {
+    public void onQuit(Player player) {
         consumer.accept(player);
     }
 }
